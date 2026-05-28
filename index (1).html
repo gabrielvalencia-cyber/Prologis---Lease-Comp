@@ -1,0 +1,2942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prologis × Unframe — Lease Comps Briefing</title>
+<meta name="description" content="How lease comps are handled today, what has been tried, how Unframe is different, and how it scales across Prologis.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f8fb;
+  --bg-alt: #ffffff;
+  --surface: #ffffff;
+  --surface-subtle: #eaf1f8;
+  --ink-1: #0b2034;
+  --ink-2: #13314c;
+  --text1: #0f2438;
+  --text2: #3b5468;
+  --text3: #5e7589;
+  --text4: #92a5b6;
+  --brand: #1763A6;
+  --brand-hover: #0f4a7e;
+  --brand-soft: #b3cce2;
+  --brand-dim: #e4eef7;
+  --accent: #0a96a4;
+  --accent-bright: #1fb2bf;
+  --neutral: #b3c0cb;
+  --neutral-bg: #e9eef4;
+  --border: #dbe5ee;
+  --border-strong: #c1cfdb;
+  --warn: #d97706;
+  --warn-bg: #fff5e6;
+  --red: #c8324b;
+  --red-bg: #fbeef0;
+  --green: #00875a;
+  --green-bg: #e8f5ef;
+  --shadow: 0 1px 3px 0 rgba(0,0,0,.04), 0 1px 2px 0 rgba(0,0,0,.04);
+  --shadow-lg: 0 20px 40px -16px rgba(8,24,40,.18), 0 4px 12px -2px rgba(8,24,40,.08);
+  --font: 'Inter', system-ui, sans-serif;
+  --t-h1: clamp(32px, 3vw, 46px);
+  --t-h2: clamp(24px, 2.2vw, 32px);
+  --t-stat: clamp(48px, 5.6vw, 76px);
+  --t-body-lg: clamp(15px, 1.15vw, 18px);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text1);
+  overflow-x: hidden;
+  font-feature-settings: 'ss01','cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, .section-hed { text-wrap: balance; }
+p, .section-sub { text-wrap: pretty; }
+.shell { max-width: 1240px; margin: 0 auto; padding: 0 clamp(24px, 6vw, 80px); width: 100%; }
+
+/* progress bar */
+#prog {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--brand); transform-origin: 0 50%; transform: scaleX(0);
+  z-index: 200; transition: transform .12s linear;
+}
+
+/* nav */
+nav.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(16px, 4vw, 40px);
+  background: rgba(245,248,251,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-sep { font: 500 13px/1 var(--font); color: var(--text4); }
+.nav-wordmark { font: 700 15px/1 var(--font); color: var(--text1); letter-spacing: -.02em; }
+.nav-label { font: 500 13px/1 var(--font); color: var(--text3); }
+#navDots { display: flex; align-items: center; gap: 8px; }
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: none; background: var(--border-strong); cursor: pointer;
+  transition: background .2s, transform .2s; padding: 0;
+}
+.nav-dot.active { background: var(--brand); transform: scale(1.35); }
+
+/* right rail */
+.cnav {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 12px; z-index: 99;
+}
+.cnav-item {
+  font: 600 10px/1 var(--font); color: var(--text4);
+  letter-spacing: .08em; text-transform: uppercase;
+  transition: color .2s; cursor: pointer; text-align: right;
+  background: none; border: none; padding: 0;
+  display: flex; align-items: center; gap: 8px; justify-content: flex-end;
+}
+.cnav-item .cn-tick {
+  width: 16px; height: 1px; background: var(--border-strong);
+  transition: background .2s, width .2s;
+}
+.cnav-item.active { color: var(--brand); }
+.cnav-item.active .cn-tick { background: var(--brand); width: 22px; }
+
+/* sections */
+section {
+  min-height: 100vh;
+  padding: 96px 0 64px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+section:nth-child(odd) { background: var(--bg); }
+section:nth-child(even) { background: var(--bg-alt); }
+section > .shell { width: 100%; }
+
+/* reveal */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.reveal.in { opacity: 1; transform: none; }
+[data-delay="1"] { transition-delay: .08s; }
+[data-delay="2"] { transition-delay: .16s; }
+[data-delay="3"] { transition-delay: .24s; }
+[data-delay="4"] { transition-delay: .32s; }
+[data-delay="5"] { transition-delay: .40s; }
+[data-delay="6"] { transition-delay: .48s; }
+
+/* breadcrumb */
+.breadcrumb {
+  display: inline-flex; align-items: center; flex-wrap: wrap;
+  gap: 8px;
+  font: 700 10px/1.3 var(--font);
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.breadcrumb .bc-step {
+  color: var(--text4);
+  transition: color .3s;
+}
+.breadcrumb .bc-step.active {
+  color: var(--brand);
+  position: relative;
+}
+.breadcrumb .bc-step.active::after {
+  content: '';
+  display: block;
+  margin-top: 6px;
+  height: 2px;
+  background: var(--brand);
+  border-radius: 1px;
+}
+.breadcrumb .bc-sep {
+  color: var(--text4);
+  opacity: .4;
+  font-weight: 400;
+}
+
+/* section heading block */
+.section-hed {
+  font: 800 var(--t-h1)/1.05 var(--font);
+  letter-spacing: -.03em; color: var(--text1);
+  margin-bottom: 10px;
+}
+.section-hed em { font-style: normal; color: var(--brand); }
+.section-sub {
+  font: 400 var(--t-body-lg)/1.5 var(--font); color: var(--text2);
+  max-width: 800px; margin-bottom: 32px;
+}
+
+/* live badge */
+.live-badge {
+  position: absolute; top: 70px; right: 32px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 8px 12px; border-radius: 999px;
+  background: var(--brand); color: #fff;
+  z-index: 5;
+  box-shadow: 0 4px 12px -4px rgba(239,62,53,.4);
+}
+.live-badge::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 3px rgba(251,191,36,.32);
+  animation: livePulse 2s infinite;
+}
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,.55); }
+  50%      { box-shadow: 0 0 0 6px rgba(251,191,36,0); }
+}
+
+/* ============================================================
+   SECTION 1 — Where we started — horizontal timeline
+   ============================================================ */
+.s1-callouts {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-bottom: 36px;
+}
+.s1-co {
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.s1-co.is-strategy {
+  background: var(--neutral-bg);
+  border: 1px solid var(--border);
+}
+.s1-co.is-execution {
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-soft);
+}
+.s1-co .s1co-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text4);
+  margin-bottom: 4px;
+}
+.s1-co.is-execution .s1co-tag { color: var(--brand); }
+.s1-co .s1co-title {
+  font: 700 17px/1.25 var(--font);
+  letter-spacing: -.015em;
+  color: var(--text1);
+}
+.s1-co.is-execution .s1co-title { color: var(--brand); }
+.s1-co .s1co-body {
+  font: 400 13px/1.5 var(--font);
+  color: var(--text3);
+}
+
+.tl-track {
+  position: relative;
+  padding: 36px 0 12px;
+}
+.tl-line {
+  position: absolute;
+  top: 56px; left: 6%; right: 6%;
+  height: 2px;
+  background: linear-gradient(to right,
+    var(--brand) 0%,
+    var(--brand) 50%,
+    var(--neutral) 50%,
+    var(--neutral) 100%);
+  z-index: 0;
+}
+.tl-stops {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  position: relative; z-index: 1;
+}
+.tl-stop {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  padding: 0 20px;
+}
+.tl-when {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text4);
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+.tl-stop.is-now .tl-when {
+  background: var(--brand); color: #fff; border-color: var(--brand);
+}
+.tl-dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--neutral);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+.tl-stop.is-done .tl-dot {
+  background: var(--brand); border-color: var(--brand);
+}
+.tl-stop.is-now .tl-dot {
+  background: var(--accent-bright); border-color: var(--accent-bright);
+  box-shadow: 0 0 0 8px rgba(251,191,36,.16);
+  animation: pulseNow 2.2s infinite;
+}
+@keyframes pulseNow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,.45); }
+  50%      { box-shadow: 0 0 0 10px rgba(251,191,36,0); }
+}
+.tl-title {
+  font: 700 15px/1.3 var(--font);
+  color: var(--text1);
+  letter-spacing: -.01em;
+  max-width: 280px;
+  margin-bottom: 6px;
+}
+.tl-stop.is-now .tl-title { color: var(--brand); }
+.tl-detail {
+  font: 400 12px/1.5 var(--font);
+  color: var(--text3);
+  max-width: 240px;
+}
+
+.s1-italic {
+  margin-top: 38px;
+  padding: 22px 32px;
+  background: var(--surface);
+  border-radius: 12px;
+  border-left: 4px solid var(--brand);
+  font: 500 italic clamp(16px, 1.3vw, 19px)/1.5 var(--font);
+  color: var(--text1);
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto; margin-right: auto;
+}
+.s1-italic::before { content: '\201C'; color: var(--brand); margin-right: 4px; }
+.s1-italic::after { content: '\201D'; color: var(--brand); margin-left: 4px; }
+
+.s1-footer {
+  margin-top: 22px;
+  font: 500 12px/1.55 var(--font);
+  color: var(--text4);
+  text-align: center;
+  letter-spacing: .01em;
+}
+.s1-footer strong { color: var(--text2); font-weight: 600; }
+
+/* ============================================================
+   SECTION 2 — Where we are — before/after + 3 tiles
+   ============================================================ */
+.s2-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 22px;
+}
+.s2-side {
+  padding: 28px 30px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.s2-side.is-current {
+  background: var(--neutral-bg);
+}
+.s2-side.is-future {
+  background: var(--brand);
+  color: #fff;
+}
+.s2-side-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.s2-side.is-future .s2-side-head {
+  border-bottom-color: rgba(255,255,255,.15);
+}
+.s2-side-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text4);
+}
+.s2-side.is-future .s2-side-tag {
+  color: var(--accent-bright);
+}
+.s2-side-title {
+  font: 700 16px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.015em;
+}
+.s2-side.is-future .s2-side-title { color: #fff; }
+.s2-flow {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.s2-step {
+  display: grid; grid-template-columns: 32px 1fr;
+  gap: 12px; align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface);
+}
+.s2-side.is-future .s2-step {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.s2-step-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: var(--surface-subtle);
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.s2-side.is-future .s2-step-icon {
+  background: rgba(80,175,120,.18);
+  color: var(--accent-bright);
+}
+.s2-step-icon svg { width: 18px; height: 18px; }
+.s2-step-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.s2-step-title {
+  font: 700 13px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+}
+.s2-side.is-future .s2-step-title { color: #fff; }
+.s2-step-detail {
+  font: 400 11px/1.4 var(--font);
+  color: var(--text3);
+}
+.s2-side.is-future .s2-step-detail { color: rgba(255,255,255,.75); }
+.s2-cockpit {
+  background: var(--ink-1);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 8px;
+  border: 1px solid rgba(251,191,36,.24);
+}
+.s2-cockpit-head {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+  display: flex; align-items: center; gap: 8px;
+}
+.s2-cockpit-head::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-bright);
+}
+.s2-cockpit-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+}
+.s2-cockpit-cell {
+  font: 700 10px/1.2 var(--font);
+  color: #fff;
+  text-align: center;
+  padding: 8px 4px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px;
+}
+.s2-side-foot {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(0,0,0,.12);
+  font: 500 12px/1.5 var(--font);
+  color: var(--text2);
+}
+.s2-side.is-future .s2-side-foot {
+  border-top-color: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.85);
+}
+.s2-side-foot strong { color: var(--text1); font-weight: 700; }
+.s2-side.is-future .s2-side-foot strong { color: #fff; }
+
+.s2-tiles {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.s2-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  box-shadow: var(--shadow);
+}
+.s2-tile-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--brand);
+}
+.s2-tile-title {
+  font: 700 16px/1.2 var(--font);
+  letter-spacing: -.015em;
+  color: var(--text1);
+}
+.s2-tile-list {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 0; padding: 0; list-style: none;
+}
+.s2-tile-list li {
+  font: 500 13px/1.4 var(--font);
+  color: var(--text2);
+  padding-left: 22px;
+  position: relative;
+}
+.s2-tile-list li::before {
+  content: '';
+  position: absolute; left: 4px; top: 6px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.s2-tile.is-validated .s2-tile-list li {
+  padding-left: 26px;
+}
+.s2-tile.is-validated .s2-tile-list li::before {
+  content: '\2713';
+  background: none;
+  color: var(--brand);
+  font: 800 13px/1 var(--font);
+  top: 1px;
+  left: 2px;
+  width: auto; height: auto;
+  border-radius: 0;
+}
+
+/* ============================================================
+   SECTION 2 — Four areas surfaced
+   ============================================================ */
+.s2-area-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.s2-area {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.s2-area.is-marquee {
+  background: var(--ink-1);
+  color: #fff;
+  border-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+.s2-area.is-marquee::after {
+  content: ''; position: absolute;
+  right: -60px; top: -60px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239,62,53,.18), transparent 70%);
+  pointer-events: none;
+}
+.s2a-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.s2-area.is-marquee .s2a-head { border-bottom-color: rgba(255,255,255,.14); }
+.s2a-rank {
+  font: 800 22px/1 var(--font);
+  color: var(--brand);
+  letter-spacing: -.02em;
+}
+.s2a-name {
+  font: 700 17px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.015em;
+}
+.s2-area.is-marquee .s2a-name { color: #fff; }
+.s2a-tier {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  white-space: nowrap;
+}
+.s2-area.is-marquee .s2a-tier {
+  background: rgba(239,62,53,.18);
+  color: var(--accent-bright);
+}
+.s2a-body {
+  font: 400 13.5px/1.55 var(--font);
+  color: var(--text2);
+  position: relative; z-index: 1;
+}
+.s2-area.is-marquee .s2a-body { color: rgba(255,255,255,.82); }
+.s2a-pattern {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--brand-dim);
+  display: flex; flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  position: relative; z-index: 1;
+}
+.s2-area.is-marquee .s2a-pattern {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.s2a-pattern-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--brand);
+}
+.s2-area.is-marquee .s2a-pattern-tag { color: var(--accent-bright); }
+.s2a-pattern-text {
+  font: 500 12.5px/1.5 var(--font);
+  color: var(--text2);
+}
+.s2a-pattern-text strong { color: var(--text1); font-weight: 700; }
+.s2-area.is-marquee .s2a-pattern-text { color: rgba(255,255,255,.85); }
+.s2-area.is-marquee .s2a-pattern-text strong { color: #fff; }
+
+.s2-method {
+  padding: 18px 26px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 14px;
+  display: flex; flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 8px 20px -8px rgba(239,62,53,.32);
+}
+.s2m-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+}
+.s2m-text {
+  font: 400 14px/1.55 var(--font);
+  color: rgba(255,255,255,.92);
+}
+.s2m-text strong { color: #fff; font-weight: 700; }
+
+/* ============================================================
+   SECTION 3 — Tactical → Strategic
+   ============================================================ */
+.s3-lead {
+  font: 600 clamp(15px, 1.25vw, 18px)/1.5 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+  max-width: 900px;
+  margin-bottom: 28px;
+  padding: 16px 22px;
+  background: var(--brand-dim);
+  border-left: 3px solid var(--brand);
+  border-radius: 0 10px 10px 0;
+}
+.s3-flow {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 0;
+  align-items: center;
+  margin-bottom: 26px;
+}
+.s3-tac-col, .s3-strat-col {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.s3-col-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: 4px;
+}
+.s3-tac {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow);
+}
+.s3-tac-n {
+  font: 800 16px/1 var(--font);
+  color: var(--brand);
+  letter-spacing: -.02em;
+}
+.s3-tac-name {
+  font: 600 14px/1.3 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+}
+
+.s3-flow-arrows {
+  display: flex; align-items: stretch;
+  justify-content: center;
+  height: 100%;
+  min-height: 320px;
+}
+.s3-flow-arrows svg {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+}
+
+.s3-strat {
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.s3-strat.is-moat {
+  background: var(--brand);
+  color: #fff;
+}
+.s3-strat.is-eff {
+  background: var(--ink-1);
+  color: #fff;
+}
+.s3-strat-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+}
+.s3-strat.is-moat .s3-strat-tag { color: #fff; opacity: .8; }
+.s3-strat-name {
+  font: 800 18px/1.2 var(--font);
+  color: #fff;
+  letter-spacing: -.02em;
+}
+.s3-strat-body {
+  font: 400 13px/1.55 var(--font);
+  color: rgba(255,255,255,.85);
+}
+
+.s3-callout {
+  padding: 16px 24px;
+  background: var(--ink-1);
+  color: #fff;
+  border-radius: 12px;
+  font: 500 14px/1.5 var(--font);
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+}
+.s3-callout strong { color: var(--accent-bright); font-weight: 700; }
+.s3c-tag {
+  font: 800 10px/1 var(--font);
+  color: #fff;
+  letter-spacing: .14em; text-transform: uppercase;
+  background: var(--brand);
+  padding: 6px 12px; border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   SECTION 4 — Loan servicing lifecycle — phased
+   ============================================================ */
+.s4-hed-row {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+.s4-trillion-card {
+  background: var(--ink-1);
+  color: #fff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  margin-top: 6px;
+  cursor: pointer;
+  transition: padding .35s ease, box-shadow .25s ease;
+}
+.s4-trillion-card:hover {
+  box-shadow: 0 24px 48px -16px rgba(40,10,8,.32), 0 4px 12px -2px rgba(40,10,8,.12);
+}
+.s4tc-collapsed,
+.s4tc-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.s4tc-expanded {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height .4s ease, opacity .3s ease, margin-top .3s ease;
+}
+.s4-trillion-card:hover .s4tc-collapsed {
+  display: none;
+}
+.s4-trillion-card:hover .s4tc-expanded {
+  max-height: 400px;
+  opacity: 1;
+  margin-top: 0;
+  pointer-events: auto;
+}
+.s4tc-hint {
+  font: 600 11px/1 var(--font);
+  color: var(--accent-bright);
+  letter-spacing: .04em;
+  margin-top: 4px;
+  opacity: .8;
+}
+.s4-trillion-card::after {
+  content: '';
+  position: absolute;
+  right: -40px; bottom: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251,191,36,.18), transparent 70%);
+  pointer-events: none;
+}
+.s4tc-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+  display: inline-flex; align-items: center; gap: 8px;
+  position: relative; z-index: 1;
+}
+.s4tc-tag::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 3px rgba(251,191,36,.18);
+}
+.s4tc-title {
+  font: 800 22px/1.15 var(--font);
+  color: #fff; letter-spacing: -.025em;
+  position: relative; z-index: 1;
+}
+.s4tc-title em { font-style: normal; color: var(--accent-bright); }
+.s4tc-body {
+  font: 400 12.5px/1.55 var(--font);
+  color: rgba(255,255,255,.78);
+  position: relative; z-index: 1;
+}
+.s4tc-body strong { color: #fff; font-weight: 700; }
+.s4tc-punchline {
+  font: 700 13px/1.4 var(--font);
+  color: var(--accent-bright) !important;
+  letter-spacing: -.005em;
+  margin-top: 2px;
+}
+
+.s4-context {
+  font: 500 14px/1.55 var(--font);
+  color: var(--text2);
+  text-align: center;
+  margin-bottom: 22px;
+  max-width: 760px;
+  margin-left: auto; margin-right: auto;
+}
+.s4-context strong { color: var(--brand); font-weight: 700; }
+
+.s4-swim {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 22px 22px;
+  box-shadow: var(--shadow);
+}
+
+/* Phase bands sit above the stages, in a 12-col grid */
+.s4-phase-bands {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.s4-band {
+  padding: 12px 14px;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+.s4-band.is-phase2 {
+  grid-column: 1 / span 4;
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-soft);
+}
+.s4-band.is-phase1 {
+  grid-column: 5 / span 4;
+  background: var(--brand);
+  color: #fff;
+}
+.s4-band.is-phase3 {
+  grid-column: 9 / span 4;
+  background: var(--surface-subtle);
+  border: 1px dashed var(--border-strong);
+}
+.s4-band-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+}
+.s4-band-num {
+  font: 800 11px/1 var(--font);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.s4-band.is-phase2 .s4-band-num,
+.s4-band.is-phase3 .s4-band-num { color: var(--brand); }
+.s4-band.is-phase1 .s4-band-num { color: var(--accent-bright); }
+.s4-band-when {
+  font: 600 10px/1 var(--font);
+  color: var(--text4);
+  letter-spacing: .02em;
+}
+.s4-band.is-phase1 .s4-band-when { color: rgba(255,255,255,.65); }
+.s4-band-name {
+  font: 600 11px/1.3 var(--font);
+  color: var(--text2);
+  letter-spacing: -.005em;
+}
+.s4-band.is-phase1 .s4-band-name { color: rgba(255,255,255,.92); }
+
+.s4-lanes {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.s4-stage {
+  padding: 12px 8px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  text-align: center;
+  min-height: 86px;
+  position: relative;
+}
+/* color stages by phase */
+.s4-stage.is-p2 {
+  background: var(--brand-dim);
+  border-color: var(--brand-soft);
+}
+.s4-stage.is-p1 {
+  background: rgba(239,62,53,.10);
+  border-color: var(--brand-soft);
+}
+.s4-stage.is-p3 {
+  background: var(--surface-subtle);
+  border: 1px dashed var(--border-strong);
+}
+.s4-stage.is-poc {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  box-shadow: 0 4px 12px -4px rgba(239,62,53,.4);
+}
+.s4-stage-n {
+  font: 800 11px/1 var(--font);
+  letter-spacing: -.02em;
+  color: var(--text4);
+}
+.s4-stage.is-p1 .s4-stage-n,
+.s4-stage.is-p2 .s4-stage-n { color: var(--brand); }
+.s4-stage.is-poc .s4-stage-n { color: var(--accent-bright); }
+.s4-stage-name {
+  font: 600 10px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.01em;
+}
+.s4-stage.is-poc .s4-stage-name { color: #fff; }
+.s4-stage-badge {
+  font: 800 8px/1 var(--font);
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--accent-bright);
+  color: var(--brand);
+  margin-top: auto;
+}
+
+/* Timeline below the lanes */
+.s4-timeline {
+  margin: 18px 0 12px;
+  padding: 16px 10px 6px;
+  border-top: 1px solid var(--border);
+}
+.s4-tl-axis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-bottom: 6px;
+}
+.s4-tl-tick {
+  font: 700 10px/1 var(--font);
+  color: var(--text4);
+  letter-spacing: .04em; text-transform: uppercase;
+  text-align: left;
+}
+.s4-tl-tick:last-child { text-align: right; }
+.s4-tl-bar {
+  height: 6px;
+  background: linear-gradient(to right,
+    var(--brand) 0%,
+    var(--brand) 33%,
+    var(--accent) 33%,
+    var(--accent) 66%,
+    var(--border-strong) 66%,
+    var(--border-strong) 100%);
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+.s4-tl-note {
+  font: 500 11px/1.4 var(--font);
+  color: var(--text3);
+  text-align: center;
+  letter-spacing: .01em;
+}
+.s4-tl-note strong { color: var(--brand); font-weight: 700; }
+
+.s4-foundation {
+  padding: 12px 16px;
+  background: var(--neutral-bg);
+  border-radius: 8px;
+  font: 600 12px/1.4 var(--font);
+  color: var(--text2);
+  text-align: center;
+  letter-spacing: .01em;
+  margin-top: 12px;
+}
+.s4-foundation strong { color: var(--text1); font-weight: 700; }
+
+/* ============================================================
+   SECTION 5 — Expeditors globally — bullseye
+   ============================================================ */
+.s5-wrap {
+  display: grid; grid-template-columns: 1.4fr 1fr;
+  gap: 36px;
+  align-items: center;
+}
+.s5-bullseye {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 580px;
+  margin: 0 auto;
+}
+.s5-bullseye svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+.s5-ring-label {
+  position: absolute;
+  font: 700 11px/1.2 var(--font);
+  letter-spacing: -.005em;
+  text-align: left;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.s5-ring-label .srl-name {
+  font: 700 11px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+  display: block;
+}
+.s5-ring-label .srl-detail {
+  font: 500 10px/1.3 var(--font);
+  color: var(--text4);
+}
+.s5-center-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.s5-center-label .scl-tag {
+  font: 800 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 6px;
+}
+.s5-center-label .scl-name {
+  font: 800 13px/1.2 var(--font);
+  color: #fff;
+  letter-spacing: -.005em;
+  max-width: 120px;
+}
+.s5-center-label .scl-detail {
+  font: 500 10px/1.2 var(--font);
+  color: rgba(255,255,255,.7);
+  margin-top: 4px;
+}
+
+.s5-side {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.s5-callout {
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.s5-callout.is-strategy {
+  background: var(--ink-1);
+  color: #fff;
+}
+.s5-callout.is-aligned {
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-soft);
+}
+.s5-callout-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.s5-callout.is-strategy .s5-callout-tag::before {
+  content: '\1F551';
+}
+.s5-callout.is-aligned .s5-callout-tag {
+  color: var(--brand);
+}
+.s5-callout-title {
+  font: 700 15px/1.3 var(--font);
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.s5-callout.is-aligned .s5-callout-title { color: var(--brand); }
+.s5-callout-body {
+  font: 400 13px/1.55 var(--font);
+  color: rgba(255,255,255,.78);
+}
+.s5-callout.is-aligned .s5-callout-body { color: var(--text2); }
+.s5-callout-body strong { color: #fff; font-weight: 700; }
+.s5-callout.is-aligned .s5-callout-body strong { color: var(--brand); }
+
+.s5-footer {
+  margin-top: 32px;
+  text-align: center;
+  padding: 28px;
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  font: 700 clamp(18px, 1.6vw, 24px)/1.3 var(--font);
+  letter-spacing: -.015em;
+  color: var(--text1);
+}
+.s5-footer em { font-style: normal; color: var(--brand); }
+.s5-quote {
+  margin-top: 18px;
+  padding: 22px 32px;
+  background: var(--ink-1);
+  color: #fff;
+  border-radius: 14px;
+  text-align: center;
+  font: 500 italic clamp(16px, 1.3vw, 20px)/1.55 var(--font);
+}
+.s5-quote::before { content: '\201C'; color: var(--accent-bright); margin-right: 4px; }
+.s5-quote::after { content: '\201D'; color: var(--accent-bright); margin-left: 4px; }
+
+/* ============================================================
+   SECTION 5 — Bullseye platform play (interactive)
+   ============================================================ */
+.s5-callouts-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.s5-co {
+  padding: 16px 22px;
+  border-radius: 12px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.s5-co.is-aligned {
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-soft);
+}
+.s5-co.is-timing {
+  background: var(--ink-1);
+  color: #fff;
+}
+.s5co-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.s5-co.is-aligned .s5co-tag { color: var(--brand); }
+.s5-co.is-timing .s5co-tag { color: var(--accent-bright); }
+.s5co-text {
+  font: 400 13px/1.5 var(--font);
+}
+.s5-co.is-aligned .s5co-text { color: var(--text2); }
+.s5-co.is-aligned .s5co-text strong { color: var(--brand); font-weight: 700; }
+.s5-co.is-timing .s5co-text { color: rgba(255,255,255,.82); }
+.s5-co.is-timing .s5co-text strong { color: #fff; font-weight: 700; }
+
+.s5-stage {
+  display: grid; grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: center;
+  min-height: 540px;
+}
+.s5-bullseye {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 700 / 600;
+  margin: 0 auto;
+}
+.s5-bullseye svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* hub label */
+.s5-hub-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 170px;
+  pointer-events: none;
+  z-index: 3;
+}
+.s5hl-tag {
+  font: 700 8px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 6px;
+}
+.s5hl-name {
+  font: 800 14px/1.15 var(--font);
+  color: #fff;
+  letter-spacing: -.015em;
+  margin-bottom: 4px;
+}
+.s5hl-detail {
+  font: 600 10px/1.3 var(--font);
+  color: rgba(255,255,255,.72);
+  letter-spacing: -.005em;
+}
+
+/* spoke labels (HTML over SVG) */
+.s5-spoke-labels {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.s5-spoke-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 110px;
+  pointer-events: none;
+}
+.s5-spoke-label .ssl-name {
+  font: 700 11px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+  margin-bottom: 2px;
+}
+.s5-spoke-label.is-active .ssl-name {
+  color: var(--brand);
+}
+
+/* spoke nodes inside the SVG */
+.spoke-node {
+  cursor: pointer;
+  transition: r .2s ease, fill .2s ease;
+}
+.spoke-node-bg {
+  fill: #fff;
+  stroke: #b9c2bc;
+  stroke-width: 2;
+  transition: fill .2s ease, stroke .2s ease;
+}
+.spoke-node.is-active .spoke-node-bg {
+  fill: var(--brand);
+  stroke: var(--brand);
+}
+.spoke-node-icon {
+  fill: var(--brand);
+  font: 700 13px/1 var(--font);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  transition: fill .2s ease;
+}
+.spoke-node.is-active .spoke-node-icon {
+  fill: #fff;
+}
+
+/* cross-flow lines */
+.cflow-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.cflow-line.is-visible { opacity: 0.85; animation: cfDraw .55s ease forwards; }
+@keyframes cfDraw {
+  from { stroke-dasharray: 1 999; stroke-dashoffset: 999; }
+  to   { stroke-dasharray: 999 0; stroke-dashoffset: 0; }
+}
+.cflow-label {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  fill: var(--brand);
+  text-anchor: middle;
+  dominant-baseline: central;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.cflow-label.is-visible { opacity: 1; }
+.cflow-label-bg {
+  fill: #fff;
+  stroke: var(--brand-soft);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.cflow-label-bg.is-visible { opacity: 1; }
+
+/* detail panel */
+.s5-detail {
+  background: var(--surface);
+  border: 1.5px solid var(--brand-soft);
+  border-radius: 14px;
+  padding: 22px 24px;
+  min-height: 380px;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+.s5d-default {
+  display: flex; flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  flex: 1;
+}
+.s5d-default-tag {
+  font: 700 10px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--brand);
+}
+.s5d-default-text {
+  font: 500 14px/1.5 var(--font);
+  color: var(--text2);
+}
+.s5d-active {
+  display: flex; flex-direction: column;
+  gap: 14px;
+  animation: s5dFade .35s ease;
+}
+@keyframes s5dFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.s5d-head {
+  display: flex; flex-direction: column; gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.s5d-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--brand);
+}
+.s5d-name {
+  font: 800 18px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.02em;
+}
+.s5d-sub {
+  font: 500 12px/1.3 var(--font);
+  color: var(--text3);
+}
+.s5d-row {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.s5d-row-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent);
+}
+.s5d-row-text {
+  font: 400 12.5px/1.5 var(--font);
+  color: var(--text2);
+}
+.s5d-row-text strong { color: var(--text1); font-weight: 600; }
+
+/* full-width footer */
+.s5-footer-band {
+  margin-top: 32px;
+  padding: 24px 32px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 14px;
+  text-align: center;
+  font: 700 clamp(18px, 1.6vw, 24px)/1.3 var(--font);
+  letter-spacing: -.015em;
+}
+.s5fb-text strong { color: var(--accent-bright); font-weight: 800; }
+
+/* SECTION 5 — through-line additions */
+.s5-narrative {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px;
+  background: var(--brand-dim);
+  border-left: 4px solid var(--brand);
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 20px;
+}
+.s5n-arrow {
+  font: 800 22px/1 var(--font);
+  color: var(--brand);
+  flex-shrink: 0;
+  animation: s5nArrow 2.4s infinite ease-in-out;
+}
+@keyframes s5nArrow {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(4px); }
+}
+.s5n-text {
+  font: 500 14px/1.55 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+}
+.s5n-text strong { color: var(--brand); font-weight: 700; }
+
+/* Outward-flowing spoke lines (default state) */
+#spokeLines line {
+  stroke-dasharray: 8 6;
+  stroke-dashoffset: 0;
+  animation: spokeFlow 3s linear infinite;
+  transition: stroke .25s ease, stroke-width .25s ease, opacity .25s ease;
+}
+@keyframes spokeFlow {
+  to { stroke-dashoffset: -28; }
+}
+#spokeLines line.is-active {
+  stroke: var(--brand);
+  stroke-width: 2.5;
+  opacity: 1;
+}
+#spokeLines line.is-dim {
+  opacity: .35;
+}
+
+/* default detail panel additions */
+.s5d-default-headline {
+  font: 700 17px/1.3 var(--font);
+  color: var(--text1);
+  letter-spacing: -.015em;
+  margin-top: 4px;
+}
+.s5d-default-text strong {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* Section 6 tooltips */
+.fw-managed, .fw-block { position: relative; cursor: pointer; }
+.fw-managed:hover, .fw-block:hover { z-index: 9999 !important; }
+.fw-os-row { position: relative; }
+.fw-os-row:has(.fw-block:hover) { z-index: 9999 !important; }
+.fw-tip { z-index: 9999 !important; }
+.fw-managed::after, .fw-block::after {
+  content: 'ℹ';
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 16px; height: 16px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font: 700 10px/1 var(--font);
+  pointer-events: none;
+  opacity: .7;
+  transition: opacity .15s, background .15s;
+}
+.fw-block.is-ml::after { background: rgba(239,62,53,.18); color: var(--brand); }
+.fw-managed:hover::after, .fw-block:hover::after {
+  opacity: 1;
+  background: rgba(255,255,255,.32);
+}
+.fw-block.is-ml:hover::after { background: rgba(239,62,53,.32); }
+
+.fw-tip {
+  position: absolute;
+  left: 50%;
+  width: 380px;
+  max-width: calc(100vw - 60px);
+  background: var(--ink-1);
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 14px 36px -10px rgba(40,10,8,.45);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity .25s ease, transform .25s ease;
+  transform: translateX(-50%);
+}
+.fw-tip.is-below {
+  top: calc(100% + 12px);
+}
+.fw-tip.is-above {
+  bottom: calc(100% + 12px);
+}
+.fw-managed:hover > .fw-tip,
+.fw-block:hover > .fw-tip {
+  opacity: 1;
+}
+.fw-managed:hover > .fw-tip.is-below,
+.fw-block:hover > .fw-tip.is-below {
+  transform: translateX(-50%) translateY(2px);
+}
+.fw-managed:hover > .fw-tip.is-above,
+.fw-block:hover > .fw-tip.is-above {
+  transform: translateX(-50%) translateY(-2px);
+}
+.fw-tip::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  margin-left: -7px;
+  width: 14px; height: 14px;
+  background: var(--ink-1);
+  transform: rotate(45deg);
+}
+.fw-tip.is-below::before { top: -6px; }
+.fw-tip.is-above::before { bottom: -6px; }
+.fw-tip-head {
+  display: block;
+  font: 700 13px/1.35 var(--font);
+  color: var(--accent-bright);
+  margin-bottom: 12px;
+  letter-spacing: -.005em;
+}
+.fw-tip ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column;
+  gap: 7px;
+}
+.fw-tip li {
+  font: 400 12px/1.5 var(--font);
+  color: rgba(255,255,255,.85);
+  padding-left: 14px;
+  position: relative;
+}
+.fw-tip li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+}
+
+/* gate */
+#gate {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(247,248,246,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: opacity .35s ease, visibility .35s ease;
+}
+#gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.gate-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 20px;
+  padding: 44px 48px 40px; width: min(480px, calc(100vw - 40px));
+  box-shadow: 0 8px 40px rgba(40,10,8,.10);
+  display: flex; flex-direction: column; gap: 28px;
+}
+.gate-lockup { display: flex; align-items: center; gap: 12px; }
+.gate-lockup .gx { font: 500 18px/1 var(--font); color: var(--text4); }
+.gate-lockup .client { font: 700 16px/1 var(--font); color: var(--text1); letter-spacing: -.02em; }
+.gate-body h2 {
+  font: 700 26px/1.2 var(--font); color: var(--text1);
+  letter-spacing: -.02em; margin-bottom: 8px;
+}
+.gate-body p { font: 400 14px/1.5 var(--font); color: var(--text3); }
+.gate-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.gate-field label {
+  font: 700 11px/1 var(--font); letter-spacing:.1em;
+  text-transform:uppercase; color:var(--text3);
+  display:block; margin-bottom:6px;
+}
+.gate-field input {
+  width:100%; padding:12px 14px;
+  border:1.5px solid var(--border); border-radius:9px;
+  font:400 14px/1 var(--font); color:var(--text1);
+  outline:none; transition: border-color .15s, box-shadow .15s;
+  background: #fff;
+}
+.gate-field input:focus {
+  border-color:var(--brand);
+  box-shadow: 0 0 0 4px rgba(239,62,53,.12);
+}
+#gateBtn {
+  margin-top:4px; padding:13px 20px;
+  background:var(--brand); color:#fff;
+  border:none; border-radius:10px;
+  font:700 14px/1 var(--font); cursor:pointer;
+  transition:background .15s, transform .15s;
+}
+#gateBtn:hover { background:var(--brand-hover); transform: translateY(-1px); }
+.gate-note { font:400 12px/1.5 var(--font); color:var(--text4); text-align:center; }
+.gate-err { font:500 12.5px/1.4 var(--font); color:var(--red); margin-top:-4px; display:none; }
+.gate-err.show { display:block; }
+
+/* ============================================================
+   SECTION 6 — The Framery — aligned grid layout
+   ============================================================ */
+.framery-wrap {
+  display: grid;
+  grid-template-columns: 170px 56px 1fr 220px;
+  grid-template-rows: auto auto auto auto;
+  column-gap: 14px;
+  row-gap: 16px;
+  align-items: stretch;
+  position: relative;
+}
+
+/* row placements */
+.fw-row-1 { grid-row: 1; }
+.fw-row-2 { grid-row: 2; }
+.fw-row-3 { grid-row: 3; }
+.fw-row-4 { grid-row: 4; }
+
+/* column placements */
+.fw-side-card.is-left { grid-column: 1; }
+.fw-arrow { grid-column: 2; display: flex; align-items: center; }
+.fw-managed,
+.fw-os-row,
+.fw-block.is-knowledge,
+.fw-block.is-data { grid-column: 3; }
+
+.fw-side-card {
+  background: var(--ink-1);
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; justify-content: center;
+  gap: 4px;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+.fwsc-tag {
+  font: 700 9px/1 var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-bright);
+}
+.fwsc-name {
+  font: 700 14px/1.2 var(--font);
+  color: #fff;
+  letter-spacing: -.01em;
+}
+
+/* center blocks */
+.fw-managed {
+  background: var(--accent);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.fw-block-head {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  color: #fff;
+  font: 800 12px/1 var(--font);
+  letter-spacing: -.005em;
+}
+.fw-block-head .fwbh-icon { color: #fff; }
+.fw-block-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.fw-block-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.fw-block-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.fw-block-row.cols-1 { grid-template-columns: 1fr; }
+.fw-chip {
+  padding: 10px 8px;
+  border-radius: 6px;
+  background: #fff;
+  text-align: center;
+  font: 700 11px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+}
+
+.fw-os-row {
+  display: grid; grid-template-columns: 1.6fr 1fr;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.fw-block {
+  border-radius: 12px;
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.fw-block.is-agents { background: var(--brand); }
+.fw-block.is-ml { background: var(--accent-bright); }
+.fw-block.is-ml .fw-block-head { color: var(--brand); }
+.fw-block.is-knowledge { background: var(--ink-2); position: relative; z-index: 1; }
+.fw-block.is-data { background: var(--brand-hover); position: relative; z-index: 1; }
+
+/* Framery OS outer frame — spans rows 2-4 col 3 */
+.fw-os-frame {
+  grid-column: 3;
+  grid-row: 2 / 5;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 14px;
+  margin: -8px;
+  background: rgba(0, 63, 45, 0.02);
+  pointer-events: none;
+  z-index: 0;
+}
+.fw-os-tag-floating {
+  grid-column: 3;
+  grid-row: 2;
+  background: var(--ink-1);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font: 700 10px/1 var(--font);
+  letter-spacing: .04em;
+  display: inline-flex; align-items: center; gap: 6px;
+  justify-self: start;
+  align-self: start;
+  margin-left: 14px;
+  margin-top: -10px;
+  z-index: 2;
+  width: fit-content;
+}
+.fw-os-tag-floating strong { font-weight: 800; color: #fff; }
+.fw-os-tag-floating em { font-style: normal; color: var(--accent-bright); font-weight: 600; }
+
+/* right column spans rows 1-4 */
+.fw-right-col {
+  grid-column: 4;
+  grid-row: 1 / 5;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+.fw-col-head {
+  font: 700 12px/1.2 var(--font);
+  color: var(--text1);
+  letter-spacing: -.005em;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.fw-col-head .fwch-icon {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font: 800 11px/1 var(--font);
+}
+.fw-col-items {
+  display: flex; flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+}
+.fw-col-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font: 700 11px/1.2 var(--font);
+  letter-spacing: .01em;
+  text-align: center;
+  background: var(--surface-subtle);
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+
+/* mobile */
+@media (max-width: 1100px) {
+  .framery-wrap {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .fw-row-1, .fw-row-2, .fw-row-3, .fw-row-4 { grid-row: auto; }
+  .fw-side-card.is-left, .fw-managed, .fw-os-row,
+  .fw-block.is-knowledge, .fw-block.is-data,
+  .fw-right-col, .fw-os-frame, .fw-os-tag-floating { grid-column: 1; grid-row: auto; }
+  .fw-os-frame { display: none; }
+  .fw-arrow { display: none; }
+}
+
+/* mobile */
+@media (max-width: 1100px) {
+  .s5-stage { grid-template-columns: 1fr; }
+}
+@media (max-width: 960px) {
+  section { min-height: auto; padding: 88px 0 56px; overflow: visible; }
+  .s5-callouts-row { grid-template-columns: 1fr; }
+  .s5-stage { grid-template-columns: 1fr; min-height: auto; gap: 18px; }
+  .s5-bullseye { max-width: 100%; }
+  .s5-detail { min-height: auto; }
+  nav.topnav { padding: 0 16px; }
+  .nav-label { display: none; }
+  .cnav { display: none; }
+  .live-badge { top: 60px; right: 16px; }
+  .breadcrumb { font-size: 9px; }
+  .s1-callouts { grid-template-columns: 1fr; }
+  .tl-stops { grid-template-columns: 1fr; gap: 28px; }
+  .tl-line { display: none; }
+  .s2-split { grid-template-columns: 1fr; }
+  .s2-area-grid { grid-template-columns: 1fr; }
+  .s2-tiles { grid-template-columns: 1fr; }
+  .s3-flow-row { grid-template-columns: 1fr 1fr; }
+  .s3-flow { grid-template-columns: 1fr; }
+  .s3-flow-arrows { display: none; }
+  .s4-lanes { grid-template-columns: repeat(4, 1fr); }
+  .s4-hed-row { grid-template-columns: 1fr; gap: 18px; }
+  .s4-phase-bands { grid-template-columns: 1fr; }
+  .s4-band.is-phase1, .s4-band.is-phase2, .s4-band.is-phase3 { grid-column: 1; }
+  .s4-tl-axis { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-lockup">
+      <svg width="24" height="24" viewBox="0 0 35 35" fill="none">
+        <defs>
+          <linearGradient id="gg" x1="8" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1763A6"/>
+            <stop offset="60%" stop-color="#0f4a7e"/>
+            <stop offset="100%" stop-color="#1fb2bf"/>
+          </linearGradient>
+        </defs>
+        <path d="M26.2494 18.7481C26.2745 21.5014 25.4532 23.7153 23.8543 25.3898C22.2618 27.0643 20.1739 27.8859 17.5781 27.8859C14.9823 27.8859 12.7941 27.0643 11.1702 25.3898C9.55255 23.7153 8.75 21.5014 8.75 18.723V7.91699H12.9697V18.6478C12.9697 20.2721 13.3835 21.5578 14.2299 22.5048C15.0764 23.4581 16.1862 23.9222 17.5718 23.9222C18.8822 23.9222 19.9356 23.4581 20.7382 22.5048C21.5344 21.5515 21.9483 20.2659 21.9483 18.6478V7.91699H26.193L26.2432 18.7481H26.2494Z" fill="url(#gg)"/>
+      </svg>
+      <span class="nav-wordmark">Unframe</span>
+      <span class="gx">×</span>
+      <span class="client">Prologis</span>
+    </div>
+    <div class="gate-body">
+      <h2>Lease Comps Briefing</h2>
+      <p>How lease comp ingestion works today, what your team has tried, how Unframe approaches it differently, and where it goes across Prologis. Enter the password to view.</p>
+    </div>
+    <form id="gateForm">
+      <div class="gate-field"><label>Password</label><input type="password" id="gPass" required autofocus></div>
+      <p id="gateErr" class="gate-err">Incorrect password. Please try again.</p>
+      <button type="submit" id="gateBtn">View briefing →</button>
+    </form>
+    <p class="gate-note">This document is confidential. For authorized recipients only.</p>
+  </div>
+</div>
+
+<nav class="topnav">
+  <div class="nav-brand">
+    <svg width="22" height="22" viewBox="0 0 35 35" fill="none">
+      <defs>
+        <linearGradient id="ng" x1="8" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1763A6"/>
+          <stop offset="60%" stop-color="#0f4a7e"/>
+          <stop offset="100%" stop-color="#1fb2bf"/>
+        </linearGradient>
+      </defs>
+      <path d="M26.2494 18.7481C26.2745 21.5014 25.4532 23.7153 23.8543 25.3898C22.2618 27.0643 20.1739 27.8859 17.5781 27.8859C14.9823 27.8859 12.7941 27.0643 11.1702 25.3898C9.55255 23.7153 8.75 21.5014 8.75 18.723V7.91699H12.9697V18.6478C12.9697 20.2721 13.3835 21.5578 14.2299 22.5048C15.0764 23.4581 16.1862 23.9222 17.5718 23.9222C18.8822 23.9222 19.9356 23.4581 20.7382 22.5048C21.5344 21.5515 21.9483 20.2659 21.9483 18.6478V7.91699H26.193L26.2432 18.7481H26.2494Z" fill="url(#ng)"/>
+    </svg>
+    <span class="nav-wordmark">Unframe</span>
+    <span class="nav-sep">×</span>
+    <span class="nav-label">Prologis · Lease Comps</span>
+  </div>
+  <div id="navDots"></div>
+</nav>
+
+
+<!-- ============================================================
+     SECTION 1 — Today / the bottleneck
+     ============================================================ -->
+<section id="s1" data-screen-label="01 Today">
+  <style>
+    .pl1-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 30px; }
+    .pl1-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px; }
+    .pl1-stat .fig { font: 800 clamp(26px,2.6vw,36px)/1 var(--font); letter-spacing: -.03em; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+    .pl1-stat .fig em { font-style: normal; color: var(--brand); }
+    .pl1-stat .cap { font: 500 12.5px/1.45 var(--font); color: var(--text2); }
+    .pl1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .pl1-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px 28px; box-shadow: var(--shadow); }
+    .pl1-card.is-flow { border-top: 4px solid var(--brand); }
+    .pl1-card.is-why { border-top: 4px solid var(--accent); }
+    .pl1-card-tag { font: 700 10px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--brand); margin-bottom: 16px; display: block; }
+    .pl1-card.is-why .pl1-card-tag { color: var(--accent); }
+    .pl1-steps { display: flex; flex-direction: column; gap: 0; }
+    .pl1-step { display: grid; grid-template-columns: 26px 1fr; gap: 14px; align-items: start; padding: 11px 0; position: relative; }
+    .pl1-step:not(:last-child)::before { content: ''; position: absolute; left: 12px; top: 30px; bottom: -2px; width: 1.5px; background: var(--border-strong); }
+    .pl1-step .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--brand-dim); color: var(--brand); font: 800 11px/26px var(--font); text-align: center; z-index: 1; }
+    .pl1-step .lbl { font: 600 13.5px/1.4 var(--font); color: var(--text1); padding-top: 3px; }
+    .pl1-step .lbl span { display: block; font: 500 12px/1.4 var(--font); color: var(--text3); margin-top: 2px; }
+    .pl1-step.is-manual .dot { background: var(--accent); color: #fff; }
+    .pl1-why-list { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+    .pl1-why-list li { font: 400 13.5px/1.5 var(--font); color: var(--text2); padding-left: 22px; position: relative; }
+    .pl1-why-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+    .pl1-why-list li strong { color: var(--ink-1); font-weight: 700; }
+    .pl1-quote { margin-top: 16px; background: var(--ink-1); border-radius: 16px; padding: 24px 30px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .pl1-quote .mark { font: 800 44px/1 var(--font); color: var(--accent-bright); }
+    .pl1-quote .q { font: 600 clamp(16px,1.5vw,20px)/1.45 var(--font); color: #fff; flex: 1; min-width: 320px; letter-spacing: -.01em; }
+    .pl1-quote .who { font: 600 12px/1.4 var(--font); color: rgba(255,255,255,.6); letter-spacing: .04em; text-transform: uppercase; }
+    @media (max-width: 1000px) { .pl1-stats { grid-template-columns: 1fr 1fr; } .pl1-grid { grid-template-columns: 1fr; } }
+  </style>
+  <div class="shell">
+    <div class="reveal"><nav class="breadcrumb"><span class="bc-step active">Today</span><span class="bc-sep">→</span><span class="bc-step">What's been tried</span><span class="bc-sep">→</span><span class="bc-step">Our approach</span><span class="bc-sep">→</span><span class="bc-step">Platform play</span><span class="bc-sep">→</span><span class="bc-step">How we operate</span><span class="bc-sep">→</span><span class="bc-step">Next step</span></nav></div>
+    <div class="reveal" data-delay="1">
+      <h1 class="section-hed">Today, every comp is typed by <em>hand</em>.</h1>
+      <p class="section-sub">Lease comps are one of the most important data sets at Prologis — they inform what to buy and where. Today they arrive from every broker in every format, and a single analyst transcribes them one document at a time.</p>
+    </div>
+
+    <div class="pl1-stats reveal" data-delay="2">
+      <div class="pl1-stat"><span class="fig tab-num">3–4K</span><span class="cap">Comps ingested per year — and the team wants that number to grow.</span></div>
+      <div class="pl1-stat"><span class="fig"><em>104</em></span><span class="cap">Unique PDF &amp; Excel template types, found auditing 229 docs over 7 months.</span></div>
+      <div class="pl1-stat"><span class="fig">1<span style="font-size:.5em; color:var(--text3); font-weight:600;"> + 2</span></span><span class="cap">One transcriber (Europe-based); two more sets of eyes before upload.</span></div>
+      <div class="pl1-stat"><span class="fig">At <em>capacity</em></span><span class="cap">No headroom — any volume increase is a direct risk to coverage.</span></div>
+    </div>
+
+    <div class="pl1-grid reveal" data-delay="3">
+      <div class="pl1-card is-flow">
+        <span class="pl1-card-tag">The workflow today</span>
+        <div class="pl1-steps">
+          <div class="pl1-step"><span class="dot">1</span><span class="lbl">Comps arrive from brokers<span>Email, files — no upstream standardization across markets or brokers.</span></span></div>
+          <div class="pl1-step is-manual"><span class="dot">2</span><span class="lbl">Analyst reads &amp; transcribes by hand<span>Looks at each document on screen and types fields into a standardized Excel.</span></span></div>
+          <div class="pl1-step is-manual"><span class="dot">3</span><span class="lbl">Two-person QA review<span>Two sets of eyes check accuracy before anything is trusted.</span></span></div>
+          <div class="pl1-step"><span class="dot">4</span><span class="lbl">Geocode &amp; upload<span>Mapped into the database, then geocoded for spatial analysis.</span></span></div>
+        </div>
+      </div>
+      <div class="pl1-card is-why">
+        <span class="pl1-card-tag">Why it's a bottleneck</span>
+        <ul class="pl1-why-list">
+          <li><strong>Slow, inconsistent, not scalable.</strong> Manual transcription can't keep up with the volume the business actually wants.</li>
+          <li><strong>Comps are formatted to resist reading</strong> — often deliberately. Many are hard even for the human eye.</li>
+          <li><strong>No upstream standardization.</strong> Brokers won't (and largely can't) send a uniform template; the solution has to absorb the variety.</li>
+          <li><strong>Accuracy &amp; duplicates ride downstream.</strong> Investment decisions depend on this data being right and current.</li>
+          <li><strong>Geocoding is rough</strong> — industrial addresses are often a street with no number; raw land has no address at all.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pl1-quote reveal" data-delay="4">
+      <span class="mark">&ldquo;</span>
+      <span class="q">They make the worst documents you've ever seen — they make zero sense.</span>
+      <span class="who">Louise · Prologis GIS team</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — What's been tried
+     ============================================================ -->
+<section id="s2" data-screen-label="02 What's been tried">
+  <style>
+    .pl2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .pl2-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px 28px; box-shadow: var(--shadow); }
+    .pl2-card.is-built { border-top: 4px solid var(--brand); }
+    .pl2-card.is-wall { border-top: 4px solid var(--red); }
+    .pl2-tag { font: 700 10px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; display: block; color: var(--brand); }
+    .pl2-card.is-wall .pl2-tag { color: var(--red); }
+    .pl2-built-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .pl2-built-row .name { font: 800 18px/1.2 var(--font); color: var(--ink-1); letter-spacing: -.01em; }
+    .pl2-built-row .badge { font: 700 10px/1 var(--font); letter-spacing: .04em; text-transform: uppercase; color: var(--green); background: var(--green-bg); padding: 5px 9px; border-radius: 999px; }
+    .pl2-built-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .pl2-built-list li { font: 400 13px/1.5 var(--font); color: var(--text2); padding-left: 20px; position: relative; }
+    .pl2-built-list li::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--green); font-weight: 800; font-size: 12px; }
+    .pl2-built-list li strong { color: var(--ink-1); font-weight: 700; }
+    .pl2-cov { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
+    .pl2-cov-h { font: 600 11px/1 var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .pl2-bar { display: flex; flex-direction: column; gap: 9px; }
+    .pl2-bar-row { display: grid; grid-template-columns: 96px 1fr 44px; align-items: center; gap: 10px; }
+    .pl2-bar-row .k { font: 600 12px/1.3 var(--font); color: var(--text2); }
+    .pl2-bar-track { height: 18px; background: var(--neutral-bg); border-radius: 5px; overflow: hidden; }
+    .pl2-bar-fill { display: block; height: 100%; border-radius: 5px; }
+    .pl2-bar-row .v { text-align: right; font: 700 12px/1 var(--font); color: var(--ink-1); font-variant-numeric: tabular-nums; }
+    .pl2-wall-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .pl2-wall-list li { font: 400 13.5px/1.5 var(--font); color: var(--text2); padding-left: 30px; position: relative; }
+    .pl2-wall-list li::before { content: '✕'; position: absolute; left: 0; top: -1px; width: 20px; height: 20px; border-radius: 6px; background: var(--red-bg); color: var(--red); font: 800 11px/20px var(--font); text-align: center; }
+    .pl2-wall-list li strong { color: var(--ink-1); font-weight: 700; }
+    .pl2-concl { background: var(--ink-1); border-radius: 16px; padding: 24px 30px; display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: center; }
+    .pl2-concl-l { padding-right: 26px; border-right: 1px solid rgba(255,255,255,.14); }
+    .pl2-concl-l .t { font: 800 10px/1.3 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 8px; }
+    .pl2-concl-l .h { font: 700 17px/1.3 var(--font); color: #fff; max-width: 260px; }
+    .pl2-need { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pl2-need span { font: 600 12.5px/1.3 var(--font); color: #fff; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 8px 14px; }
+    @media (max-width: 1000px) { .pl2-grid { grid-template-columns: 1fr; } .pl2-concl { grid-template-columns: 1fr; } .pl2-concl-l { border-right: none; border-bottom: 1px solid rgba(255,255,255,.14); padding-right: 0; padding-bottom: 16px; } }
+  </style>
+  <div class="shell">
+    <div class="reveal"><nav class="breadcrumb"><span class="bc-step">Today</span><span class="bc-sep">→</span><span class="bc-step active">What's been tried</span><span class="bc-sep">→</span><span class="bc-step">Our approach</span><span class="bc-sep">→</span><span class="bc-step">Platform play</span><span class="bc-sep">→</span><span class="bc-step">How we operate</span><span class="bc-sep">→</span><span class="bc-step">Next step</span></nav></div>
+    <div class="reveal" data-delay="1">
+      <h2 class="section-hed">ChatGPT got <em>6%</em> of the way there.</h2>
+      <p class="section-sub">The team did the rigorous thing: built and deployed a custom GPT, then audited the whole document set. It worked — on a sliver — and proved exactly where the ceiling is.</p>
+    </div>
+
+    <div class="pl2-grid reveal" data-delay="2">
+      <div class="pl2-card is-built">
+        <span class="pl2-tag">What the team built</span>
+        <div class="pl2-built-row"><span class="name">LeaseCompGPT</span><span class="badge">Deployed</span></div>
+        <ul class="pl2-built-list">
+          <li>Custom ChatGPT for extraction → standardized Excel for database ingest.</li>
+          <li>Configured on <strong>4 similar templates</strong> (JLL / CBRE / Lee / Voit, LA &amp; IE).</li>
+          <li><strong>95% accurate</strong> on those — ~3 hours net time saved per doc, including QA.</li>
+          <li>But that set is only <strong>~6% of volume</strong>.</li>
+        </ul>
+        <div class="pl2-cov">
+          <div class="pl2-cov-h">Template audit — 229 docs, 104 unique types</div>
+          <div class="pl2-bar">
+            <div class="pl2-bar-row"><span class="k">Top 5 types</span><span class="pl2-bar-track"><span class="pl2-bar-fill" style="width:31%; background:linear-gradient(90deg,#b3cce2,#1763A6);"></span></span><span class="v">31%</span></div>
+            <div class="pl2-bar-row"><span class="k">Top 10 types</span><span class="pl2-bar-track"><span class="pl2-bar-fill" style="width:43%; background:linear-gradient(90deg,#7fa9cf,#0f4a7e);"></span></span><span class="v">43%</span></div>
+            <div class="pl2-bar-row"><span class="k">The long tail</span><span class="pl2-bar-track"><span class="pl2-bar-fill" style="width:100%; background:repeating-linear-gradient(45deg,#eaf1f8,#eaf1f8 7px,#fff 7px,#fff 14px); border:1px dashed var(--border-strong);"></span></span><span class="v">57%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pl2-card is-wall">
+        <span class="pl2-tag">Why it hits a wall</span>
+        <ul class="pl2-wall-list">
+          <li><strong>Hallucinated values.</strong> Accuracy fell apart once trained past a few templates.</li>
+          <li><strong>Black box.</strong> No auditability — you can't show why it decided what it decided.</li>
+          <li><strong>No structured, repeatable output.</strong> Can't reliably enforce the schema the database needs.</li>
+          <li><strong>No validation or correction workflow.</strong> Nothing native to catch, route, and fix the misses.</li>
+          <li><strong>Can't be standardized away.</strong> Brokers won't change; a solution must handle variability, not eliminate it.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pl2-concl reveal" data-delay="3">
+      <div class="pl2-concl-l">
+        <div class="t">The team's own conclusion</div>
+        <div class="h">A general-purpose LLM alone is not sufficient. To automate this you also need:</div>
+      </div>
+      <div class="pl2-need">
+        <span>Handle a large range of templates</span>
+        <span>Workflow on top of AI — not purely prompt-based</span>
+        <span>Human-in-the-loop validation</span>
+        <span>Learns from corrections over time</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 3 — Our approach (semantic layer)
+     ============================================================ -->
+<section id="s3" data-screen-label="03 Our approach">
+  <style>
+    .pl3-lead { display: flex; gap: 12px; flex-wrap: wrap; margin: 4px 0 26px; }
+    .pl3-chip { font: 600 12.5px/1.3 var(--font); color: var(--brand); background: var(--brand-dim); border-radius: 999px; padding: 9px 16px; }
+    .pl3-chip.is-alt { color: var(--accent); background: #e2f5f6; }
+    .pl3-pipe { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 18px; }
+    .pl3-stage { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; gap: 8px; }
+    .pl3-stage::after { content: '→'; position: absolute; right: -9px; top: 50%; transform: translateY(-50%); font: 800 14px/1 var(--font); color: var(--border-strong); z-index: 2; }
+    .pl3-stage:last-child::after { display: none; }
+    .pl3-stage .n { font: 800 12px/1 var(--font); color: var(--brand); letter-spacing: -.01em; }
+    .pl3-stage .nm { font: 700 13px/1.25 var(--font); color: var(--ink-1); letter-spacing: -.005em; }
+    .pl3-stage .d { font: 500 11.5px/1.4 var(--font); color: var(--text3); }
+    .pl3-stage.is-hil { background: var(--brand); border-color: var(--brand); }
+    .pl3-stage.is-hil .n { color: var(--accent-bright); }
+    .pl3-stage.is-hil .nm { color: #fff; }
+    .pl3-stage.is-hil .d { color: rgba(255,255,255,.82); }
+    .pl3-stage.is-hil::after { color: var(--brand-soft); }
+    .pl3-proof { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+    .pl3-proofcard { background: var(--ink-1); border-radius: 16px; padding: 26px 30px; display: flex; flex-direction: column; gap: 14px; }
+    .pl3-proofcard .t { font: 700 10px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-bright); }
+    .pl3-proofcard .q { font: 600 clamp(15px,1.4vw,18px)/1.45 var(--font); color: #fff; letter-spacing: -.01em; }
+    .pl3-proofcard .q strong { color: var(--accent-bright); font-weight: 800; }
+    .pl3-proofcard .who { font: 600 12px/1.4 var(--font); color: rgba(255,255,255,.55); letter-spacing: .04em; text-transform: uppercase; }
+    .pl3-metrics { display: flex; gap: 26px; margin-top: 4px; }
+    .pl3-metric .mv { font: 800 30px/1 var(--font); color: #fff; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+    .pl3-metric .mv em { font-style: normal; color: var(--accent-bright); }
+    .pl3-metric .ml { font: 500 11px/1.3 var(--font); color: rgba(255,255,255,.6); margin-top: 4px; }
+    .pl3-vs { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 14px; }
+    .pl3-vs .vt { font: 700 10px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--text3); }
+    .pl3-vs-row { display: flex; gap: 12px; align-items: flex-start; font: 500 13px/1.45 var(--font); }
+    .pl3-vs-row .x { color: var(--text4); font-weight: 700; flex-shrink: 0; }
+    .pl3-vs-row.is-them { color: var(--text3); }
+    .pl3-vs-row.is-us { color: var(--text1); }
+    .pl3-vs-row.is-us .x { color: var(--brand); }
+    .pl3-vs-row strong { color: var(--ink-1); font-weight: 700; }
+    @media (max-width: 1000px) { .pl3-pipe { grid-template-columns: 1fr 1fr; } .pl3-stage::after { display:none; } .pl3-proof { grid-template-columns: 1fr; } }
+  </style>
+  <div class="shell">
+    <div class="reveal"><nav class="breadcrumb"><span class="bc-step">Today</span><span class="bc-sep">→</span><span class="bc-step">What's been tried</span><span class="bc-sep">→</span><span class="bc-step active">Our approach</span><span class="bc-sep">→</span><span class="bc-step">Platform play</span><span class="bc-sep">→</span><span class="bc-step">How we operate</span><span class="bc-sep">→</span><span class="bc-step">Next step</span></nav></div>
+    <div class="reveal" data-delay="1">
+      <h2 class="section-hed">Not templates. A <em>semantic layer</em>.</h2>
+      <p class="section-sub">Unframe doesn't learn your 104 templates — it learns what a lease comp <em>is</em>. So when a format changes, or a new broker shows up, nothing breaks. It's a workflow built on top of AI, not a prompt.</p>
+    </div>
+
+    <div class="pl3-lead reveal" data-delay="2">
+      <span class="pl3-chip">Deterministic, not purely prompt-based</span>
+      <span class="pl3-chip is-alt">Not RAG chunking — preserves position, context &amp; margin handwriting</span>
+    </div>
+
+    <div class="pl3-pipe reveal" data-delay="2">
+      <div class="pl3-stage"><span class="n">01</span><span class="nm">Lexicon</span><span class="d">A data contract — the fields &amp; expected value ranges that define a comp.</span></div>
+      <div class="pl3-stage"><span class="n">02</span><span class="nm">OCR pass</span><span class="d">Pure capture for completeness — no intelligence, just every character.</span></div>
+      <div class="pl3-stage"><span class="n">03</span><span class="nm">LLM pass</span><span class="d">Extraction aligned to the lexicon, with industry &amp; document context.</span></div>
+      <div class="pl3-stage"><span class="n">04</span><span class="nm">Confidence</span><span class="d">Every field scored by explicit rules and linked to its exact source spot.</span></div>
+      <div class="pl3-stage"><span class="n">05</span><span class="nm">Validation</span><span class="d">Sum-of-parts vs. totals + cross-check to your DB baseline. Proves completeness.</span></div>
+      <div class="pl3-stage is-hil"><span class="n">06</span><span class="nm">Human-in-the-loop</span><span class="d">Anything under threshold routes to a side-by-side review. Learns from each fix.</span></div>
+    </div>
+
+    <div class="pl3-proof reveal" data-delay="3">
+      <div class="pl3-proofcard">
+        <span class="t">Proof — Cushman &amp; Wakefield</span>
+        <span class="q">They vetted <strong>50 vendors</strong> and needed <strong>96%</strong> accuracy. Unframe hit <strong>98% in ~3 weeks</strong> — the last 1% caught by human-in-the-loop.</span>
+        <div class="pl3-metrics">
+          <div class="pl3-metric"><div class="mv"><em>98%</em></div><div class="ml">accuracy, vs. 96% required</div></div>
+          <div class="pl3-metric"><div class="mv">~3 wk</div><div class="ml">to production-grade</div></div>
+          <div class="pl3-metric"><div class="mv">50→1</div><div class="ml">vendors vetted → chosen</div></div>
+        </div>
+      </div>
+      <div class="pl3-vs">
+        <span class="vt">The difference, plainly</span>
+        <div class="pl3-vs-row is-them"><span class="x">✕</span><span>Custom GPT: train on each template, hope it generalizes, get hallucinations and a black box.</span></div>
+        <div class="pl3-vs-row is-us"><span class="x">✓</span><span><strong>Unframe:</strong> one semantic understanding, deterministic confidence, audit trail to source, and a review loop that improves.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — Platform play (across Prologis)
+     ============================================================ -->
+<section id="s4" data-screen-label="04 Platform play">
+  <style>
+    .pl4-hub { display: grid; grid-template-columns: 280px 1fr; gap: 18px; align-items: stretch; margin-bottom: 16px; }
+    .pl4-core { background: var(--brand); border-radius: 18px; padding: 28px 26px; color: #fff; display: flex; flex-direction: column; justify-content: center; gap: 12px; position: relative; overflow: hidden; }
+    .pl4-core::after { content: ''; position: absolute; right: -40px; bottom: -40px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(31,178,191,.3), transparent 70%); }
+    .pl4-core .t { font: 700 10px/1.2 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-bright); position: relative; z-index: 1; }
+    .pl4-core .nm { font: 800 24px/1.1 var(--font); letter-spacing: -.02em; position: relative; z-index: 1; }
+    .pl4-core .d { font: 500 13px/1.5 var(--font); color: rgba(255,255,255,.85); position: relative; z-index: 1; }
+    .pl4-out { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .pl4-node { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px; border-left: 3px solid var(--accent); }
+    .pl4-node .nh { font: 700 13.5px/1.25 var(--font); color: var(--ink-1); letter-spacing: -.005em; }
+    .pl4-node .nd { font: 500 12px/1.45 var(--font); color: var(--text2); }
+    .pl4-model { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .pl4-mc { background: var(--surface-subtle); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 5px; }
+    .pl4-mc .mh { font: 800 14px/1.2 var(--font); color: var(--brand); }
+    .pl4-mc .md { font: 500 12px/1.45 var(--font); color: var(--text2); }
+    .pl4-foot { background: var(--ink-1); border-radius: 16px; padding: 22px 30px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .pl4-foot .ft { font: 800 10px/1.2 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-bright); white-space: nowrap; }
+    .pl4-foot .fx { font: 600 14px/1.5 var(--font); color: #fff; flex: 1; min-width: 320px; }
+    .pl4-foot .fx strong { color: var(--accent-bright); }
+    @media (max-width: 1000px) { .pl4-hub { grid-template-columns: 1fr; } .pl4-out { grid-template-columns: 1fr 1fr; } .pl4-model { grid-template-columns: 1fr; } }
+  </style>
+  <div class="shell">
+    <div class="reveal"><nav class="breadcrumb"><span class="bc-step">Today</span><span class="bc-sep">→</span><span class="bc-step">What's been tried</span><span class="bc-sep">→</span><span class="bc-step">Our approach</span><span class="bc-sep">→</span><span class="bc-step active">Platform play</span><span class="bc-sep">→</span><span class="bc-step">How we operate</span><span class="bc-sep">→</span><span class="bc-step">Next step</span></nav></div>
+    <div class="reveal" data-delay="1">
+      <h2 class="section-hed">One solution that <em>powers the next</em>.</h2>
+      <p class="section-sub">Lease abstraction is the entry point — the least interesting thing we do. Because every solution shares context on one platform, structured comps become the foundation for everything downstream, not a tool that sits on a shelf.</p>
+    </div>
+
+    <div class="pl4-hub reveal" data-delay="2">
+      <div class="pl4-core">
+        <span class="t">The foundation</span>
+        <span class="nm">Structured lease comps</span>
+        <span class="d">High-accuracy, source-linked, deduplicated — the asset every team below reads from.</span>
+      </div>
+      <div class="pl4-out">
+        <div class="pl4-node"><span class="nh">GIS &amp; spatial</span><span class="nd">Geo-JSON points into parcel polygons; human-in-the-loop geocoding for low-accuracy industrial &amp; raw-land addresses.</span></div>
+        <div class="pl4-node"><span class="nh">Dedup &amp; versioning</span><span class="nd">Most-recent comp is authoritative; full history retained — feeding the asset-ID project.</span></div>
+        <div class="pl4-node"><span class="nh">Portfolio insights</span><span class="nd">Top 3 lease / sales / development comps within a 30-minute drive time, on demand.</span></div>
+        <div class="pl4-node"><span class="nh">Executive reporting</span><span class="nd">Performance vs. competitors and sub-market trends — base data to leadership view, in one place.</span></div>
+        <div class="pl4-node"><span class="nh">Sign → GIS automation</span><span class="nd">Automate the flow from signed lease through to implementation in the GIS platform.</span></div>
+        <div class="pl4-node"><span class="nh">Knowledge fabric</span><span class="nd">An AI-native model of your data &amp; context — skip the multi-year data-lake / ETL project.</span></div>
+      </div>
+    </div>
+
+    <div class="pl4-model reveal" data-delay="3">
+      <div class="pl4-mc"><span class="mh">Per solution, per year</span><span class="md">Not per-user, not per-token. Value can spread across the org without seat-based friction.</span></div>
+      <div class="pl4-mc"><span class="mh">Permission-aware</span><span class="md">Role-based access from your connected systems is respected natively — broker to leadership.</span></div>
+      <div class="pl4-mc"><span class="mh">Auditable &amp; in your perimeter</span><span class="md">Every decision is traceable; deployed on-prem, hybrid, or cloud — no data leaves.</span></div>
+    </div>
+
+    <div class="pl4-foot reveal" data-delay="4">
+      <span class="ft">In short</span>
+      <span class="fx">Solve lease comps once, and the same fabric powers spatial analytics, portfolio insight, and executive reporting — <strong>it's part of your AI program, not a point solution.</strong></span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 7 — How we operate (Unframe overview)
+     ============================================================ -->
+<section id="s5" data-screen-label="05 How we operate">
+  <style>
+    .s7op-deck {
+      font: 700 clamp(16px, 1.4vw, 20px)/1.4 var(--font);
+      color: var(--text1);
+      letter-spacing: -.01em;
+      margin-top: 4px;
+    }
+    .s7op-deck em {
+      font-style: normal;
+      color: var(--brand);
+    }
+    .s7op-where {
+      margin: 22px 0 30px;
+    }
+    .s7op-section-tag {
+      font: 700 10px/1 var(--font);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 14px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .s7op-section-tag::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--brand);
+    }
+    .s7op-where-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .s7op-surface {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      display: flex; flex-direction: column; gap: 10px;
+      position: relative;
+      box-shadow: var(--shadow);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .s7op-surface:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .s7op-surface::before {
+      content: ''; position: absolute;
+      top: 0; left: 22px; right: 22px; height: 3px;
+      border-radius: 0 0 3px 3px;
+    }
+    .s7op-surface.is-obs::before { background: linear-gradient(90deg, #2a6fdb, #4aa3f5); }
+    .s7op-surface.is-ext::before { background: linear-gradient(90deg, #7d3bbf, #c557e2); }
+    .s7op-surface.is-agents::before { background: linear-gradient(90deg, var(--brand), var(--accent)); }
+    .s7op-surface-h {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 4px;
+    }
+    .s7op-surface-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .s7op-surface.is-obs .s7op-surface-icon { background: rgba(42,111,219,.12); color: #2a6fdb; }
+    .s7op-surface.is-ext .s7op-surface-icon { background: rgba(125,59,191,.14); color: #7d3bbf; }
+    .s7op-surface.is-agents .s7op-surface-icon { background: var(--brand-dim); color: var(--brand); }
+    .s7op-surface-icon svg { width: 16px; height: 16px; }
+    .s7op-surface-name {
+      font: 700 14px/1.2 var(--font);
+      color: var(--ink-1);
+      letter-spacing: -.01em;
+    }
+    .s7op-surface-body {
+      font: 400 12.5px/1.5 var(--font);
+      color: var(--text2);
+    }
+    .s7op-where-foot {
+      font: 500 italic 12.5px/1.4 var(--font);
+      color: var(--text3);
+      margin-top: 12px;
+    }
+
+    .s7op-different {
+      margin-top: 8px;
+    }
+    .s7op-card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .s7op-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex; flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
+      min-height: 168px;
+    }
+    .s7op-card:hover,
+    .s7op-card:focus-within {
+      background: var(--ink-1);
+      border-color: var(--ink-1);
+      box-shadow: var(--shadow-lg);
+    }
+    .s7op-card-header {
+      display: flex; align-items: baseline; gap: 10px;
+      transition: color .22s ease;
+    }
+    .s7op-num {
+      font: 800 18px/1 var(--font);
+      color: var(--brand);
+      letter-spacing: -.02em;
+    }
+    .s7op-card:hover .s7op-num,
+    .s7op-card:focus-within .s7op-num { color: var(--accent-bright); }
+    .s7op-name {
+      font: 700 14px/1.25 var(--font);
+      color: var(--ink-1);
+      letter-spacing: -.005em;
+      flex: 1;
+      text-wrap: balance;
+    }
+    .s7op-card:hover .s7op-name,
+    .s7op-card:focus-within .s7op-name { color: #fff; }
+    .s7op-collapsed {
+      font: 500 12.5px/1.5 var(--font);
+      color: var(--text2);
+      transition: opacity .22s ease, color .22s ease;
+    }
+    .s7op-card:hover .s7op-collapsed,
+    .s7op-card:focus-within .s7op-collapsed {
+      color: rgba(255,255,255,.7);
+    }
+    .s7op-expanded {
+      font: 400 12px/1.55 var(--font);
+      color: rgba(255,255,255,.92);
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, opacity .22s ease, margin .22s ease;
+      margin-top: 0;
+    }
+    .s7op-card:hover .s7op-expanded,
+    .s7op-card:focus-within .s7op-expanded {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 4px;
+    }
+    .s7op-expanded strong { color: var(--accent-bright); font-weight: 700; }
+    .s7op-hint {
+      font: 600 9px/1 var(--font);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text4);
+      margin-top: auto;
+      align-self: flex-start;
+      transition: opacity .22s ease;
+    }
+    .s7op-card:hover .s7op-hint,
+    .s7op-card:focus-within .s7op-hint { opacity: 0; }
+
+    .s7op-traction {
+      margin-top: 22px;
+      padding: 22px 4px 4px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: auto 1px 1fr 1px 1fr 1px 1fr;
+      align-items: center;
+      gap: 0 26px;
+    }
+    .s7op-tr-label {
+      font: 800 10px/1.4 var(--font);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text3);
+      max-width: 130px;
+    }
+    .s7op-tr-rule {
+      align-self: stretch;
+      width: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+    .s7op-stat {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .s7op-stat-fig {
+      font: 800 clamp(24px, 2.2vw, 30px)/1 var(--font);
+      letter-spacing: -.025em;
+      color: var(--ink-1);
+      font-variant-numeric: tabular-nums;
+    }
+    .s7op-stat-fig em {
+      font-style: normal;
+      color: var(--brand);
+    }
+    .s7op-stat-cap {
+      font: 500 11.5px/1.4 var(--font);
+      color: var(--text2);
+    }
+
+    .s7op-footer {
+      margin-top: 22px;
+      padding: 18px 26px;
+      background: var(--brand-dim);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 12px 12px 0;
+      display: flex; align-items: center; gap: 22px;
+      flex-wrap: wrap;
+    }
+    .s7op-f-tag {
+      font: 800 10px/1.2 var(--font);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--brand);
+      white-space: nowrap;
+    }
+    .s7op-f-text {
+      font: 500 13.5px/1.5 var(--font);
+      color: var(--ink-1);
+      flex: 1;
+      min-width: 320px;
+    }
+    .s7op-f-text strong { color: var(--brand); font-weight: 700; }
+    .s7op-f-geo {
+      font: 600 11px/1.3 var(--font);
+      color: var(--text3);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1000px) {
+      .s7op-where-grid { grid-template-columns: 1fr; }
+      .s7op-card-grid { grid-template-columns: 1fr 1fr; }
+      .s7op-traction {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 26px;
+      }
+      .s7op-tr-label { grid-column: 1 / -1; max-width: none; }
+      .s7op-tr-rule { display: none; }
+    }
+    @media (max-width: 640px) {
+      .s7op-card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <div class="shell">
+    <div class="reveal">
+      <nav class="breadcrumb"><span class="bc-step">Today</span><span class="bc-sep">→</span><span class="bc-step">What's been tried</span><span class="bc-sep">→</span><span class="bc-step">Our approach</span><span class="bc-sep">→</span><span class="bc-step">Platform play</span><span class="bc-sep">→</span><span class="bc-step active">How we operate</span><span class="bc-sep">→</span><span class="bc-step">Next step</span></nav>
+    </div>
+
+    <div class="reveal" data-delay="1">
+      <h2 class="section-hed">Unframe, in <em>one frame</em>.</h2>
+      <p class="s7op-deck">AI-native enterprise solutions. <em>Delivered in days.</em></p>
+    </div>
+
+    <div class="s7op-where reveal" data-delay="2">
+      <span class="s7op-section-tag">Where we usually start</span>
+      <div class="s7op-where-grid">
+        <article class="s7op-surface is-obs" tabindex="0">
+          <div class="s7op-surface-h">
+            <span class="s7op-surface-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/></svg>
+            </span>
+            <span class="s7op-surface-name">Observability &amp; Reporting</span>
+          </div>
+          <p class="s7op-surface-body">Cross-system search, natural-language queries, and auto-generated dashboards across fragmented data.</p>
+        </article>
+
+        <article class="s7op-surface is-ext" tabindex="0">
+          <div class="s7op-surface-h">
+            <span class="s7op-surface-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+            </span>
+            <span class="s7op-surface-name">Data extraction &amp; abstraction</span>
+          </div>
+          <p class="s7op-surface-body">Turn PDFs, docs, spreadsheets, and images into structured intelligence — across languages and formats.</p>
+        </article>
+
+        <article class="s7op-surface is-agents" tabindex="0">
+          <div class="s7op-surface-h">
+            <span class="s7op-surface-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <span class="s7op-surface-name">Automation &amp; Agents</span>
+          </div>
+          <p class="s7op-surface-body">AI agents for complex workflows — monitored, human-guided, integrated with your existing systems.</p>
+        </article>
+      </div>
+      <p class="s7op-where-foot">No limits to the categories. Each solution is tailored to your business.</p>
+    </div>
+
+    <div class="s7op-different reveal" data-delay="3">
+      <span class="s7op-section-tag">How we're different</span>
+      <div class="s7op-card-grid">
+
+        <article class="s7op-card" tabindex="0">
+          <header class="s7op-card-header">
+            <span class="s7op-num">01</span>
+            <span class="s7op-name">Subscribe only when you're happy</span>
+          </header>
+          <p class="s7op-collapsed">No commitment until the solution earns it.</p>
+          <div class="s7op-expanded">
+            <p>You don't pay until the solution is in production and proven against your data. <strong>The commercial risk is ours.</strong> Built to remove the &ldquo;procurement before proof&rdquo; tax that kills enterprise AI projects.</p>
+          </div>
+          <span class="s7op-hint">Hover</span>
+        </article>
+
+        <article class="s7op-card" tabindex="0">
+          <header class="s7op-card-header">
+            <span class="s7op-num">02</span>
+            <span class="s7op-name">Days, not months</span>
+          </header>
+          <p class="s7op-collapsed">Production-ready solutions on a ~3-week PoC.</p>
+          <div class="s7op-expanded">
+            <p>Deep technical building blocks assembled by a dedicated <strong>blueprint</strong> into a turnkey solution. No operational burden on your team — transparent, governed, ready to deploy from day one.</p>
+          </div>
+          <span class="s7op-hint">Hover</span>
+        </article>
+
+        <article class="s7op-card" tabindex="0">
+          <header class="s7op-card-header">
+            <span class="s7op-num">03</span>
+            <span class="s7op-name">A unified AI program, not point tools</span>
+          </header>
+          <p class="s7op-collapsed">Shared context, knowledge, and governance.</p>
+          <div class="s7op-expanded">
+            <p>Unframe embeds <strong>into</strong> your core AI program — not bolted on, not separate. APIs &amp; MCPs throughout, so every solution compounds with every other. It's <strong>not build vs. buy</strong>; it's both, in one program.</p>
+          </div>
+          <span class="s7op-hint">Hover</span>
+        </article>
+
+        <article class="s7op-card" tabindex="0">
+          <header class="s7op-card-header">
+            <span class="s7op-num">04</span>
+            <span class="s7op-name">In your perimeter. LLM-agnostic.</span>
+          </header>
+          <p class="s7op-collapsed">No data leaves. You pick the underlying model.</p>
+          <div class="s7op-expanded">
+            <p>Deployed in your environment. Permission-aware execution, auditable workflows, optional human-in-the-loop. <strong>Founded and led by cybersecurity and AI experts</strong> — security is the floor, not a feature.</p>
+          </div>
+          <span class="s7op-hint">Hover</span>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="s7op-traction reveal" data-delay="4">
+      <span class="s7op-tr-label">The market is responding</span>
+      <span class="s7op-tr-rule" aria-hidden="true"></span>
+      <div class="s7op-stat">
+        <span class="s7op-stat-fig">$100M</span>
+        <span class="s7op-stat-cap">Series B — total capital raised</span>
+      </div>
+      <span class="s7op-tr-rule" aria-hidden="true"></span>
+      <div class="s7op-stat">
+        <span class="s7op-stat-fig">$0 <em>→</em> $100M</span>
+        <span class="s7op-stat-cap">In total contract value, in under 12 months</span>
+      </div>
+      <span class="s7op-tr-rule" aria-hidden="true"></span>
+      <div class="s7op-stat">
+        <span class="s7op-stat-fig">Top <em>0.1%</em></span>
+        <span class="s7op-stat-cap">Among the fastest-growing AI companies on record</span>
+      </div>
+    </div>
+
+    <div class="s7op-footer reveal" data-delay="5">
+      <span class="s7op-f-tag">In short</span>
+      <span class="s7op-f-text">High-priority enterprise AI use cases turned into <strong>production-ready, owned-by-you solutions</strong> — governed, embedded, paid for only when they work.</span>
+      <span class="s7op-f-geo">Cupertino · Tel Aviv · Berlin</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — From use case to PoC (engagement flow)
+     ============================================================ -->
+<section id="s6" data-screen-label="06 Next step">
+  <style>
+    .s7-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .s7-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      display: flex; flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .s7-step.is-final {
+      background: var(--brand);
+      color: #fff;
+      border: none;
+    }
+    .s7-step.is-final::after {
+      content: '';
+      position: absolute;
+      right: -32px; top: -32px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,181,74,.18), transparent 70%);
+      pointer-events: none;
+    }
+    .s7-step-num {
+      font: 800 22px/1 var(--font);
+      color: var(--brand);
+      letter-spacing: -.02em;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .s7-step.is-final .s7-step-num { color: var(--accent-bright); }
+    .s7-step-num .arrow {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .s7-step.is-final .s7-step-num .arrow {
+      background: rgba(255,255,255,.18);
+    }
+    .s7-when {
+      font: 700 10px/1 var(--font);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: var(--brand-dim);
+      padding: 5px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .s7-step.is-final .s7-when {
+      color: var(--ink-1);
+      background: var(--accent-bright);
+    }
+    .s7-step-name {
+      font: 800 15px/1.25 var(--font);
+      color: var(--text1);
+      letter-spacing: -.015em;
+      position: relative; z-index: 1;
+    }
+    .s7-step.is-final .s7-step-name { color: #fff; }
+    .s7-step-list {
+      list-style: none;
+      display: flex; flex-direction: column;
+      gap: 8px;
+      padding: 0;
+      position: relative; z-index: 1;
+    }
+    .s7-step-list li {
+      font: 400 12.5px/1.5 var(--font);
+      color: var(--text2);
+      padding-left: 14px;
+      position: relative;
+    }
+    .s7-step.is-final .s7-step-list li {
+      color: rgba(255,255,255,.85);
+    }
+    .s7-step-list li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 7px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+    .s7-step.is-final .s7-step-list li::before {
+      background: var(--accent-bright);
+    }
+
+    .s7-parallel {
+      background: var(--ink-1);
+      color: #fff;
+      border-radius: 14px;
+      padding: 20px 26px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+    .s7p-tag {
+      font: 700 10px/1.2 var(--font);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--accent-bright);
+      display: flex; flex-direction: column;
+      gap: 4px;
+      padding-right: 24px;
+      border-right: 1px solid rgba(255,255,255,.14);
+    }
+    .s7p-tag .label {
+      font: 800 12px/1.2 var(--font);
+      color: #fff;
+      letter-spacing: -.005em;
+      text-transform: none;
+    }
+    .s7p-text {
+      font: 500 13.5px/1.55 var(--font);
+      color: rgba(255,255,255,.88);
+    }
+    .s7p-text strong { color: #fff; font-weight: 700; }
+
+    @media (max-width: 960px) {
+      .s7-flow { grid-template-columns: 1fr; }
+      .s7-parallel { grid-template-columns: 1fr; }
+      .s7p-tag { border-right: none; border-bottom: 1px solid rgba(255,255,255,.14); padding-right: 0; padding-bottom: 14px; }
+    }
+  </style>
+
+  <div class="shell">
+    <div class="reveal">
+      <nav class="breadcrumb"><span class="bc-step">Today</span><span class="bc-sep">→</span><span class="bc-step">What's been tried</span><span class="bc-sep">→</span><span class="bc-step">Our approach</span><span class="bc-sep">→</span><span class="bc-step">Platform play</span><span class="bc-sep">→</span><span class="bc-step">How we operate</span><span class="bc-sep">→</span><span class="bc-step active">Next step</span></nav>
+    </div>
+
+    <div class="reveal" data-delay="1">
+      <h2 class="section-hed">From <em>use case to PoC in ~3 weeks</em>.</h2>
+      <p class="section-sub">Five sequential phases. Here’s what to expect — and when. ROI and commercial alignment run in parallel, so when the PoC concludes there’s no gap between proof and production.</p>
+    </div>
+
+    <div class="s7-flow reveal" data-delay="2">
+
+      <article class="s7-step">
+        <div class="s7-step-num"><span>01</span><span class="arrow"></span><span class="s7-when">Day 1</span></div>
+        <h3 class="s7-step-name">Use Case Discovery</h3>
+        <ul class="s7-step-list">
+          <li>Initial session to understand priorities, workflows, and challenges.</li>
+          <li>Align on the target use case, expected outcomes, scope, and constraints.</li>
+        </ul>
+      </article>
+
+      <article class="s7-step">
+        <div class="s7-step-num"><span>02</span><span class="arrow"></span><span class="s7-when">Day 3</span></div>
+        <h3 class="s7-step-name">Scoping &amp; PoC Kickoff</h3>
+        <ul class="s7-step-list">
+          <li>Review use case scope, prerequisites, and solution alignment.</li>
+          <li>Confirm success criteria, required inputs, timeline, and evaluation plan.</li>
+        </ul>
+      </article>
+
+      <article class="s7-step">
+        <div class="s7-step-num"><span>03</span><span class="arrow"></span><span class="s7-when">Day 5–7</span></div>
+        <h3 class="s7-step-name">PoC Delivery</h3>
+        <ul class="s7-step-list">
+          <li>Unframe delivers the first working PoC based on agreed scope, data, and prerequisites.</li>
+          <li>Joint review of the solution and preparation of the testing phase.</li>
+        </ul>
+      </article>
+
+      <article class="s7-step">
+        <div class="s7-step-num"><span>04</span><span class="arrow"></span><span class="s7-when">Day 8–21</span></div>
+        <h3 class="s7-step-name">Testing &amp; Refinement</h3>
+        <ul class="s7-step-list">
+          <li>Your team tests the PoC end-to-end.</li>
+          <li>Regular jour-fixes to refine outputs, make adjustments, and incorporate feedback.</li>
+        </ul>
+      </article>
+
+      <article class="s7-step is-final">
+        <div class="s7-step-num"><span>05</span><span class="arrow"></span><span class="s7-when">Review</span></div>
+        <h3 class="s7-step-name">PoC Conclusion &amp; Next Steps</h3>
+        <ul class="s7-step-list">
+          <li>Review results, learnings, and business impact.</li>
+          <li>Align on production rollout, including integration and deployment model.</li>
+        </ul>
+      </article>
+
+    </div>
+
+    <div class="s7-parallel reveal" data-delay="3">
+      <div class="s7p-tag">
+        <span>In parallel</span>
+        <span class="label">ROI &amp; Commercial track</span>
+      </div>
+      <p class="s7p-text">Alongside the PoC, we <strong>align on ROI</strong>, build the business case, and progress <strong>commercial and contract</strong> discussions — so when the PoC concludes, there’s no gap between proof and production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- right rail -->
+<div class="cnav">
+  <button class="cnav-item active" data-target="s1"><span class="cn-tick"></span>Today</button>
+  <button class="cnav-item" data-target="s2"><span class="cn-tick"></span>What's been tried</button>
+  <button class="cnav-item" data-target="s3"><span class="cn-tick"></span>Our approach</button>
+  <button class="cnav-item" data-target="s4"><span class="cn-tick"></span>Platform play</button>
+  <button class="cnav-item" data-target="s5"><span class="cn-tick"></span>How we operate</button>
+  <button class="cnav-item" data-target="s6"><span class="cn-tick"></span>Next step</button>
+</div>
+
+<script>
+const STORE_KEY = 'prologis_visitor';
+const GATE_PASSWORD = 'pr0logisXunframe';
+const gate = document.getElementById('gate');
+const stored = localStorage.getItem(STORE_KEY);
+if (stored) {
+  gate.classList.add('hidden');
+} else {
+  document.body.style.overflow = 'hidden';
+  const gateErr = document.getElementById('gateErr');
+  const gPass = document.getElementById('gPass');
+  gPass.addEventListener('input', () => { gateErr.classList.remove('show'); });
+  document.getElementById('gateForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (gPass.value !== GATE_PASSWORD) {
+      gateErr.classList.add('show');
+      gPass.value = '';
+      gPass.focus();
+      return;
+    }
+    localStorage.setItem(STORE_KEY, JSON.stringify({ unlocked: new Date().toISOString() }));
+    gate.classList.add('hidden');
+    document.body.style.overflow = '';
+  });
+}
+
+const prog = document.getElementById('prog');
+function setProg() {
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const p = docH > 0 ? window.scrollY / docH : 0;
+  prog.style.transform = 'scaleX(' + Math.min(1, Math.max(0, p)) + ')';
+}
+window.addEventListener('scroll', setProg, { passive: true });
+window.addEventListener('resize', setProg);
+setProg();
+
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Draw s3 flow arrows dynamically based on element positions
+(function() {
+  const svg = document.getElementById('s3FlowSvg');
+  if (!svg) return;
+  const container = svg.parentElement; // .s3-flow-arrows
+  const flowRow = container.parentElement; // .s3-flow
+
+  function draw() {
+    const tacs = [...flowRow.querySelectorAll('.s3-tac-col .s3-tac')];
+    const strats = [...flowRow.querySelectorAll('.s3-strat-col .s3-strat')];
+    if (!tacs.length || !strats.length) return;
+
+    const cRect = container.getBoundingClientRect();
+    const w = cRect.width;
+    const h = cRect.height;
+    if (w < 4 || h < 4) return;
+
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.setAttribute('width', w);
+    svg.setAttribute('height', h);
+
+    // Clear existing paths (keep <defs>)
+    [...svg.querySelectorAll('path.s3-flow-line')].forEach(n => n.remove());
+
+    const tacYs = tacs.map(el => {
+      const r = el.getBoundingClientRect();
+      return r.top + r.height / 2 - cRect.top;
+    });
+    const stratYs = strats.map(el => {
+      const r = el.getBoundingClientRect();
+      return r.top + r.height / 2 - cRect.top;
+    });
+
+    // All 4 tacticals merge into the midpoint between the 2 strategics
+    const mergeY = (stratYs[0] + stratYs[1]) / 2;
+    const mergeX = w * 0.55;
+    const exitX = w - 2;
+
+    for (const y of tacYs) {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const d = `M 0 ${y} C ${w * 0.25} ${y}, ${mergeX} ${y}, ${mergeX} ${mergeY} L ${exitX} ${mergeY}`;
+      p.setAttribute('d', d);
+      p.setAttribute('class', 's3-flow-line');
+      p.setAttribute('stroke', '#EF3E35');
+      p.setAttribute('stroke-width', '2');
+      p.setAttribute('stroke-dasharray', '4 4');
+      p.setAttribute('fill', 'none');
+      p.setAttribute('marker-end', 'url(#arrowEdge)');
+      svg.appendChild(p);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', draw);
+  } else {
+    draw();
+  }
+  window.addEventListener('resize', draw);
+  window.addEventListener('load', draw);
+  setTimeout(draw, 500);
+  setTimeout(draw, 1500);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(draw);
+    ro.observe(flowRow);
+  }
+})();
+
+const sIds = ['s1','s2','s3','s4','s5','s6'];
+const sLabels = ['Today',"What's been tried",'Our approach','Platform play','How we operate','Next step'];
+const sections = document.querySelectorAll('section[id]');
+const cnItems  = document.querySelectorAll('.cnav-item');
+
+const navDotsEl = document.getElementById('navDots');
+sIds.forEach((id, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'nav-dot';
+  btn.title = sLabels[i];
+  btn.addEventListener('click', () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' }));
+  navDotsEl.appendChild(btn);
+});
+const navDots = navDotsEl.querySelectorAll('.nav-dot');
+
+cnItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const t = item.getAttribute('data-target');
+    if (t) document.getElementById(t).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+const sectionObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio >= 0.4) {
+      const idx = sIds.indexOf(e.target.id);
+      if (idx < 0) return;
+      navDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      cnItems.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => sectionObs.observe(s));
+</script>
+
+</body>
+</html>
